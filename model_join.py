@@ -66,7 +66,7 @@ results.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_r
 if failures == []:
     failures = pandas.DataFrame(pl.array(('None', 'failed')))
 else: failures = pandas.DataFrame(failures, columns=['model', 'rate_type', 'replicate'])
-failures.to_csv('/homes/peterhm/gbd/book/validity/model_failures.csv')
+failures.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_failures.csv')
 
 for k in range(len(success)):
     os.chdir('/home/j/Project/Models/dismodmr_rate_validation/')
