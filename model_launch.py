@@ -39,19 +39,19 @@ for m in [38393, 38395, 38398]: #dismod_models.index:
                 name = r + str(m) + str(i)
                 name_list.append(name)
                 # submit shell
-                os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd -N ' + name + ' /homes/peterhm/gbd/book/model_comparison.sh %d %s %d' %(m, r, i))
+                os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd -N ' + name + ' /home/j/Project/Models/dismodmr_rate_validation/model_comparison.sh %d %s %d' %(m, r, i))
     except IOError:
         pass
 
 # save information about rate types and models
 model_info = pandas.DataFrame(model_list, columns=['model_list'])
-model_info.to_csv('/homes/peterhm/gbd/book/validity/model_list.csv')
+model_info.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_list.csv')
 model_types = pandas.DataFrame(rate_types, columns=['rate_types'])
-model_types.to_csv('/homes/peterhm/gbd/book/validity/model_types.csv')
+model_types.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_types.csv')
     
 # joining all jobs into files
 hold_str = '-hold_jid %s ' % ','.join(name_list)
-os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd ' + hold_str + '/homes/peterhm/gbd/book/model_join.sh %d' %(replicates))
+os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd ' + hold_str + '/home/j/Project/Models/dismodmr_rate_validation/model_join.sh %d' %(replicates))
 
 
 

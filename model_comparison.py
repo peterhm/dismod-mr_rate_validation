@@ -97,7 +97,7 @@ try:
     # save statistic types (only for 1st replicate)
     if replicate == 0:
         model_stats = pandas.DataFrame(['seed', 'bias_', 'rmse_', 'mae_', 'mare_', 'pc_', 'time_'], columns=['stats'])
-        model_stats.to_csv('/homes/peterhm/gbd/book/validity/model_stats.csv')
+        model_stats.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_stats.csv')
     
 except Exception, e:
     print e

@@ -5,11 +5,11 @@ import pandas
 
 import pdb
 
-rate_types = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_types.csv')
+rate_types = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_types.csv')
 rate_types = pl.array(rate_types['rate_types'])
-stats = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_stats.csv')
+stats = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_stats.csv')
 stats = list(stats['stats'])
-model_list = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_list.csv')
+model_list = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_list.csv')
 model_list = list(model_list['model_list'])
 
 def find_best(model_list, stat, rate_types):
@@ -22,7 +22,7 @@ def find_best(model_list, stat, rate_types):
         col.append(stat+'_'+r)
     
     for m in model_list:
-        data = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_'+ str(m) + '.csv')
+        data = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_'+ str(m) + '.csv')
         all_col = set(data.columns)
         # delete columns not in use
         data = data.drop(all_col.difference(col), axis=1)
@@ -56,11 +56,11 @@ pc_summ = find_best(model_list, 'pc', rate_types)
 time_summ = find_best(model_list, 'time', rate_types)
 
 # save results
-bias_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_bias.csv')
-rmse_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_rmse.csv')
-mae_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_mae.csv')
-mare_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_mare.csv')
+bias_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_bias.csv')
+rmse_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_rmse.csv')
+mae_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_mae.csv')
+mare_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_mare.csv')
 pc_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_pc.csv')
-time_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_time.csv')
+time_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_time.csv')
     
 

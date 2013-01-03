@@ -6,16 +6,16 @@ sys.path += ['.', '..', '/homes/peterhm/gbd/', '/homes/peterhm/gbd/book']
 
 import jinja2
 from jinja2 import Environment, FileSystemLoader
-env = Environment(loader=FileSystemLoader('/homes/peterhm/gbd/book',encoding='ASCII'))
+env = Environment(loader=FileSystemLoader('/home/j/Project/Models/dismodmr_rate_validation',encoding='ASCII'))
 
 replicates = int(sys.argv[1])
 
 # opens list of all models and rate types used
-model_list = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_list.csv')
+model_list = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_list.csv')
 model_list = pl.array(model_list['model_list'], dtype='i')
-rate_types = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_types.csv')
+rate_types = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_types.csv')
 rate_types = pl.array(rate_types['rate_types'])
-stats = pandas.read_csv('/homes/peterhm/gbd/book/validity/model_stats.csv')
+stats = pandas.read_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_stats.csv')
 stats = list(stats['stats'])
 
 # mean results from each model
@@ -56,26 +56,26 @@ for num,m in enumerate(model_list):
         else:
             output_save = output_save.join(output[r].drop(['seed'],axis=1))
     # save all info for one model
-    output_save.to_csv('/homes/peterhm/gbd/book/validity/model_' + str(m) + '.csv')
+    output_save.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_' + str(m) + '.csv')
     # report summary for model
     if num == 0: results.columns = output_save.columns
     results.ix[m,:] = output_save.mean()
 
 # save all results 
-results.to_csv('/homes/peterhm/gbd/book/validity/models.csv')
+results.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_results.csv')
 if failures == []:
     failures = pandas.DataFrame(pl.array(('None', 'failed')))
 else: failures = pandas.DataFrame(failures, columns=['model', 'rate_type', 'replicate'])
 failures.to_csv('/homes/peterhm/gbd/book/validity/model_failures.csv')
 
 for k in range(len(success)):
-    os.chdir('/homes/peterhm/gbd/book/')
+    os.chdir('/home/j/Project/Models/dismodmr_rate_validation/')
     # create template of .tex file of all trace and autocorrelation figures
     all = env.get_template('model_latex_template.html')
     # write .tex file to create pdf of all trace and autocorrelation figures
-    f = file('/homes/peterhm/gbd/book/validity/model_convergence_graphics_' + str(model_list[k]) + '.tex','w')
+    f = file('/home/j/Project/Models/dismodmr_rate_validation/validity/model_convergence_graphics_' + str(model_list[k]) + '.tex','w')
     f.write(jinja2.Template.render(all,path='{/clustertmp/dismod/}',klist=success[k]))
     f.close()
     # create pdf of compiled figures
-    os.chdir('/homes/peterhm/gbd/book/validity/')
-    os.system('pdflatex /homes/peterhm/gbd/book/validity/model_convergence_graphics_' + str(model_list[k]) + '.tex')
+    os.chdir('/home/j/Project/Models/dismodmr_rate_validation/validity/')
+    os.system('pdflatex /home/j/Project/Models/dismodmr_rate_validation/validity/model_convergence_graphics_' + str(model_list[k]) + '.tex')
