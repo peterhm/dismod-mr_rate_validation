@@ -6,6 +6,7 @@
 *.pyc
 .svn
 iterate.dat
+*.tex
 *.log
 *.aux
 *.bbl
