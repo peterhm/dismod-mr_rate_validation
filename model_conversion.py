@@ -88,7 +88,7 @@ def prior_level(dm3, data_type):
         if dm3.parameters[data_type]['level_value']['age_before'] < dm3.parameters[data_type]['level_value']['age_after']:
             if (a < dm3.parameters[data_type]['level_value']['age_before']) | (a >= dm3.parameters[data_type]['level_value']['age_after']):
                 prior_in.ix[i,'mean'] = dm3.parameters[data_type]['level_value']['value']
-        if dm3.parameters[data_type]['level_value']['age_before'] > dm3.parameters[data_type]['level_value']['age_after']:
+        elif dm3.parameters[data_type]['level_value']['age_before'] > dm3.parameters[data_type]['level_value']['age_after']:
             if (a < dm3.parameters[data_type]['level_value']['age_before']) & (a >= dm3.parameters[data_type]['level_value']['age_after']):
                 prior_in.ix[i,'mean'] = dm3.parameters[data_type]['level_value']['value']
     # fill remaining mean values 
@@ -97,19 +97,26 @@ def prior_level(dm3, data_type):
     
 def prior_direction(dm3, data_type):
     # create 'dknot' from 'increasing' and 'decreasing'
-    prior_in = empty_prior_in(range(len(dm3.parameters[data_type]['parameter_age_mesh'])))
+    prior_in = empty_prior_in(range(len(dm3.parameters[data_type]['parameter_age_mesh'][:-1])))
     # fill non-age-dependent variables
     prior_in['type'] = 'dknot'
-    prior_in['name'] = dm3.parameters[data_type]['parameter_age_mesh']
+    prior_in['name'] = dm3.parameters[data_type]['parameter_age_mesh'][:-1]
     prior_in['std'] = pl.inf
-    #for i,a in enumerate(dm3.parameters[data_type]['parameter_age_mesh']):
-        # prior_in.ix[i,'lower'] = 
-        # prior_in.ix[i,'upper'] = 
-        
-        # if a <= dm3.parameters[data_type]['level_value']['age_before']:
-            # prior_in.ix[i,'mean'] = dm3.parameters[data_type]['level_value']['value']
-        # if a >= dm3.parameters[data_type]['level_value']['age_after']:
-            # prior_in.ix[i,'mean'] = dm3.parameters[data_type]['level_value']['value']  
+    if dm3.parameters[data_type]['increasing']['age_start'] !=  dm3.parameters[data_type]['increasing']['age_end']:
+        for i,a in enumerate(dm3.parameters[data_type]['parameter_age_mesh'][:-1]):
+            if (dm3.parameters[data_type]['increasing']['age_start'] <= a < dm3.parameters[data_type]['increasing']['age_end']):
+                prior_in.ix[i,'lower'] = 0.
+                prior_in.ix[i,'upper'] = pl.inf
+                prior_in.ix[i,'mean'] = 1.
+    if dm3.parameters[data_type]['decreasing']['age_start'] !=  dm3.parameters[data_type]['decreasing']['age_end']:
+        for i,a in enumerate(dm3.parameters[data_type]['parameter_age_mesh'][:-1]):
+            if (dm3.parameters[data_type]['decreasing']['age_start'] <= a < dm3.parameters[data_type]['decreasing']['age_end']):
+                prior_in.ix[i,'lower'] = - pl.inf
+                prior_in.ix[i,'upper'] = 0.
+                prior_in.ix[i,'mean'] = -1.
+    prior_in['lower'] = prior_in['lower'].fillna(-pl.inf)
+    prior_in['upper'] = prior_in['upper'].fillna(pl.inf)
+    prior_in['mean'] = prior_in['mean'].fillna(0.)
     return prior_in    
     
 
