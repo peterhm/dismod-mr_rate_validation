@@ -10,12 +10,6 @@ reload(dismod3)
 import model_utilities as mu
 reload(mu)
 
-# dm3 = mu.load_new_model(model_num, area, data_type)
-
-# if data_type_full == 'prevalence': data_type = 'p'
-# elif data_type_full == 'remission': data_type = 'r'
-# elif data_type_full == 'incidence': data_type = 'i'
-
 integrand = {'p': 'prevalence', 
              'i': 'incidence', 
              'r': 'remission', 
@@ -26,7 +20,7 @@ integrand = {'p': 'prevalence',
              'smr': 'f', 
              'X': 'f'}
 
-def dm3rep_initialize(model_num, data_type, default=False):
+def dm3rep_initialize(model_num, data_type, area, default=False):
     '''
     Parameters
     ----------
@@ -35,6 +29,8 @@ def dm3rep_initialize(model_num, data_type, default=False):
     data_type : str
       one of the epidemiologic parameters allowed
       'p', 'i', 'r', 'f', 'pf', 'csmr', 'rr', 'smr', 'X'
+    area : str
+      level of heirarchy to keep
     default : bool
       True creates minimalist files, False uses DisMod-MR values, default set to False
     Results
@@ -48,8 +44,11 @@ def dm3rep_initialize(model_num, data_type, default=False):
     os.system('bin/get_data.py %s' %model_num)
     # creates necessary files
     if default == True: os.system('bin/fit.sh %s %s' %(model_num, integrand[data_type])) # creates brad's default files
-    else: 
+    else:
+        # load data structure
         dm3 = dismod3.data.load('/home/j/Project/dismod/output/dm-%s' %model_num)
+        dm3.keep([area])
+        # create required files
         prior_in = build_prior_in() # pandas.DataFrame(columns=['type', 'name', 'lower', 'upper', 'mean', 'std'])
         parameter_in = pandas.DataFrame(columns=['name','value'])
         #data_in.csv = ????
@@ -97,6 +96,7 @@ def prior_level(dm3, data_type):
     
 def prior_direction(dm3, data_type):
     # create 'dknot' from 'increasing' and 'decreasing'
+    # note: it is required to have the final age_mesh point missing
     prior_in = empty_prior_in(range(len(dm3.parameters[data_type]['parameter_age_mesh'][:-1])))
     # fill non-age-dependent variables
     prior_in['type'] = 'dknot'
@@ -119,5 +119,5 @@ def prior_direction(dm3, data_type):
     prior_in['mean'] = prior_in['mean'].fillna(0.)
     return prior_in    
     
-
-    
+def prior_m_area(dm3)
+    areas = dm3.hierarchy.node.keys()
