@@ -21,8 +21,8 @@ area = 'europe_western'
 data_type = 'p'
 data_type_full = 'prevalence'
 
-iter=10000
-burn=1000
+iter=25000
+burn=5000
 thin=5
 
 # create output structures
