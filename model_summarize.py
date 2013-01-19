@@ -60,7 +60,7 @@ bias_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model
 rmse_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_rmse.csv')
 mae_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_mae.csv')
 mare_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_mare.csv')
-pc_summ.to_csv('/homes/peterhm/gbd/book/validity/model_summ_pc.csv')
+pc_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_pc.csv')
 time_summ.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/model_summ_time.csv')
     
 
