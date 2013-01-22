@@ -1,10 +1,11 @@
 \documentclass[12pt]{memoir} 
+\usepackage{morefloats}
 \usepackage{graphicx} 
 \graphicspath{ {{path}} } 
 \begin{document}
 
 {% for k in klist%}
-\begin{figure}[h] 
+\begin{figure}[ht] 
 \includegraphics[width=.5\textheight,natwidth=12in,natheight=9in]{model_comparison_{{k}}acorr.pdf} 
 \includegraphics[width=.5\textheight]{model_comparison_{{k}}trace.pdf} 
 \caption{ $ {{k}} $ } 
