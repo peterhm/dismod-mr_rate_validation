@@ -75,15 +75,16 @@ def create_uncertainty(model, rate_type):
     model : data.ModelData
       dismod model with measurements of uncertainty for all data
     '''
-    # find effective sample size of entire dataset
-    percent = pl.percentile(model.input_data['effective_sample_size'], 10.)
-    # find indices that contain nan for effective sample size and
-    # replace with 10th percentile effective sample size 
+    # find indices that contain nan for effective sample size 
     nan_ix = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==1].index)
+    non_nan_ix = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==0].index)
+    # find effective sample size of entire dataset
+    percent = pl.percentile(model.input_data['effective_sample_size'][non_nan_ix], 10.)
+    # replace nan effective sample size with 10th percentile 
+    model.input_data.ix[nan_ix, 'effective_sample_size'] = percent
     
     # find indices that are negative for standard error and
     # calculate standard error from effective sample size 
-    model.input_data.ix[nan_ix, 'effective_sample_size'] = percent
     if (rate_type == 'normal') | (rate_type == 'log_normal'): 
         neg_ix = list(model.input_data['standard_error'][model.input_data['standard_error']<0].index)
         for i,ix in enumerate(neg_ix):
