@@ -60,7 +60,7 @@ model, test_ix = mu.test_train(model, data_type, replicate)
 
 try:
     # create pymc nodes for model and fit the model
-    model = mu.create_new_vars(model, rate_type, data_type, area, 'male', 2005)
+    model.vars += dismod3.ism.age_specific_rate(model, data_type, area, 'male', 2005, rate_type=rate_type)
     # fit the model, using a hill-climbing alg to find an initial value
     # and then sampling from the posterior with MCMC
     start = time.clock()

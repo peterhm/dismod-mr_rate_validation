@@ -92,38 +92,6 @@ def create_uncertainty(model, rate_type):
 
     return model
 
-def create_new_vars(model, rate_model, data_type, reference_area, reference_sex, reference_year):
-    ''' creates model.vars according to specifications
-    Parameters
-    ----------
-    model : data.ModelData
-      dismod model
-    rate_model : str
-      a rate model
-      'neg_binom', 'binom', 'normal', 'log_norm', 'poisson', 'beta'
-    data_type : str
-      one of the epidemiologic parameters allowed
-      'p', 'i', 'r', 'f', 'pf', 'csmr', 'rr', 'smr', 'X'
-    reference_area : str
-      reference area for model
-    reference_sex : str
-      reference sex for model
-    reference_year : int
-      reference year for model
-    Results
-    -------
-    model : data.ModelData
-      model with vars built
-    '''
-    model_vars = dismod3.data.ModelVars()
-    model_vars[data_type] = dismod3.data_model.data_model(data_type, model, data_type, 
-                                                          reference_area, reference_sex, reference_year, 
-                                                          None, None, None, rate_type=rate_model)
-    model.vars += model_vars
-    model.vars += dismod3.ism.age_specific_rate(model, data_type)
-
-    return model    
-
 def bias(pred, obs):
     ''' model bias
     Parameters
