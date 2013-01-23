@@ -27,8 +27,8 @@ model1 = mu.create_uncertainty(model1, 'normal')
 
 # example model2, to test loading and uncertainty
 model2 = mu.load_new_model(model_num, test_area, data_type)
-nan_ix2 = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==1].index) # list of nan in effective sample size
-ten_percent = pl.percentile(model2.input_data['effective_sample_size'], 10.)
+non_nan_ix2 = list(model2.input_data['effective_sample_size'][pl.isnan(model2.input_data['effective_sample_size'])==0].index) # list of nan in effective sample size
+ten_percent = pl.percentile(model2.input_data.ix[non_nan_ix2, 'effective_sample_size'], 10.)
 model2 = mu.create_uncertainty(model2, 'normal')
 
 # find official areas of western europe
@@ -64,7 +64,7 @@ def test_uncertainty_normal():
 # now that uncertainty tests passed, can test test_train function and creation of vars
 model, test_ix = mu.test_train(model, data_type, 23)
 model1, test_ix1 = mu.test_train(model1, data_type, 23)
-model = mu.create_new_vars(model, 'binom', data_type, test_area, 'male', 2005)
+model.vars += dismod3.ism.age_specific_rate(model, data_type, test_area, 'male', 2005, rate_type='binom')
 
 def test_test_train_se():
     assert pl.all(model1.input_data.ix[test_ix1,'standard_error'] == pl.inf)
