@@ -79,7 +79,8 @@ def create_uncertainty(model, rate_type):
     nan_ix = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==1].index)
     non_nan_ix = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==0].index)
     # find effective sample size of entire dataset
-    percent = pl.percentile(model.input_data.ix[non_nan_ix,'effective_sample_size'], 10.)
+    if non_nan_ix == []: percent = pl.percentile(model.input_data['effective_sample_size'], 10.)
+    else: percent = pl.percentile(model.input_data.ix[non_nan_ix,'effective_sample_size'], 10.)
     # replace nan effective sample size with 10th percentile 
     model.input_data.ix[nan_ix, 'effective_sample_size'] = percent
     
