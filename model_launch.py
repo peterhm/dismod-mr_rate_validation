@@ -16,8 +16,6 @@ replicates = int(sys.argv[1])
 area = 'europe_western'
 data_type = 'p'
 
-rate_types = ['neg_binom', 'normal', 'log_normal', 'binom']
-
 # load best models spread sheet
 bm_path = '/snfs1/Project/GBD/dalynator/yld/best_models.csv'
 bm_csv = pandas.read_csv(bm_path,index_col=None)
@@ -25,9 +23,16 @@ bm_csv = pandas.read_csv(bm_path,index_col=None)
 dismod_models = bm_csv.groupby('dismod_model_number').apply(lambda df: df.ix[df.index[0], 'outcome_name'])
 dismod_models = dismod_models.drop([0], axis=0)
 
+if sys.argv[2] == 'test':
+    model_choices = [30507, 39665]
+    rate_types = ['log_normal', 'binom']
+else:
+    model_choices = dismod_models.index
+    rate_types = ['neg_binom', 'normal', 'log_normal', 'binom']
+
 model_list = []
 name_list = []
-for m in dismod_models.index:
+for m in model_choices:
     m = int(m)
     try:
         # check that model has more than 100 prevalence points 
