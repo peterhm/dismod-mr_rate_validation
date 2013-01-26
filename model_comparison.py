@@ -41,7 +41,7 @@ for cv in list(model.input_data.filter(like='x_').columns):
 # replace invalid uncertainty with 10% of data set
 model = mu.create_uncertainty(model, rate_type)
 
-elif: rate_type == 'log_offset':
+if rate_type == 'log_offset':
     os.chdir('/homes/peterhm/dismod_cpp-20121204/build')
     os.system('bin/get_data.py %s' %model_num)
     os.system('bin/fit.sh %s %s' %(model_num, data_type_full)) # this need 
