@@ -91,6 +91,14 @@ def create_uncertainty(model, rate_type):
         for i,ix in enumerate(neg_ix):
             model.input_data['standard_error'][ix] = pl.sqrt(model.input_data.ix[ix, 'value']*(1-model.input_data.ix[ix, 'value'])/model.input_data.ix[ix, 'effective_sample_size'])
 
+    # change values of 0 in lognormal model to 1 observation
+    if rate_type == 'log_normal':
+        # find indices where values are 0
+        ix = [i for i, x in enumerate(list(model.input_data['value'])) if x == 0]
+        # add 1 observation so no values are zero, also change effective sample size
+        model.input_data['effective_sample_size'][ix] = model.input_data['effective_sample_size'][ix] + 1
+        model.input_data['value'][ix] = 1.0/model.input_data['effective_sample_size'][ix]
+    
     return model
 
 def bias(pred, obs):

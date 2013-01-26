@@ -41,13 +41,6 @@ for cv in list(model.input_data.filter(like='x_').columns):
 # replace invalid uncertainty with 10% of data set
 model = mu.create_uncertainty(model, rate_type)
 
-# change values of 0 in lognormal model to 1 observation
-if rate_type == 'log_normal':
-    # find indices where values are 0
-    ix = [i for i, x in enumerate(list(model.input_data['value'])) if x == 0]
-    # add 1 observation so no values are zero, also change effective sample size
-    model.input_data['effective_sample_size'][ix] = model.input_data['effective_sample_size'][ix] + 1
-    model.input_data['value'][ix] = 1.0/model.input_data['effective_sample_size'][ix]
 elif rate_type == 'log_offset':
     os.chdir('/homes/peterhm/dismod_cpp-20121204/build')
     os.system('bin/get_data.py %s' %model_num)
