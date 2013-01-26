@@ -75,29 +75,37 @@ def create_uncertainty(model, rate_type):
     model : data.ModelData
       dismod model with measurements of uncertainty for all data
     '''
-    # find indices that contain nan for effective sample size 
-    nan_ix = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==1].index)
-    non_nan_ix = list(model.input_data['effective_sample_size'][pl.isnan(model.input_data['effective_sample_size'])==0].index)
-    # find effective sample size of entire dataset
-    if non_nan_ix == []: percent = pl.percentile(model.input_data['effective_sample_size'], 10.)
-    else: percent = pl.percentile(model.input_data.ix[non_nan_ix,'effective_sample_size'], 10.)
-    # replace nan effective sample size with 10th percentile 
-    model.input_data.ix[nan_ix, 'effective_sample_size'] = percent
-    
     # find indices that are negative for standard error and
     # calculate standard error from effective sample size 
-    if (rate_type == 'normal') | (rate_type == 'log_normal'): 
-        neg_ix = list(model.input_data['standard_error'][model.input_data['standard_error']<0].index)
-        for i,ix in enumerate(neg_ix):
-            model.input_data['standard_error'][ix] = pl.sqrt(model.input_data.ix[ix, 'value']*(1-model.input_data.ix[ix, 'value'])/model.input_data.ix[ix, 'effective_sample_size'])
+    missing_se = pl.isnan(model.input_data['standard_error']) | (model.input_data['standard_error'] < 0)
+    if True in set(missing_se):
+        model.input_data['standard_error'][missing_se] = (model.input_data['upper_ci'][missing_se] - model.input_data['lower_ci'][missing_se]) / (2*1.96)
+        missing_se_still = pl.isnan(model.input_data['standard_error']) | (model.input_data['standard_error'] < 0)
+        if True in set(missing_se_still):
+            model.input_data['standard_error'][missing_se_still] = pl.sqrt(model.input_data['value'][missing_se_still]*(1-model.input_data['value'][missing_se_still])/model.input_data['effective_sample_size'][missing_se_still])
 
+    # find indices that contain nan for effective sample size 
+    missing_ess = pl.isnan(model.input_data['effective_sample_size'])==1  
+    # calculate effective sample size from standard error
+    model.input_data['effective_sample_size'][missing_ess] = model.input_data['value'][missing_ess]*(1-model.input_data['value'][missing_ess])/(model.input_data['standard_error'][missing_ess])**2
+    
+    # find effective sample size of entire dataset
+    non_missing_ess_still = pl.isnan(model.input_data['effective_sample_size'])==0 # finds all real numbers
+    if False in non_missing_ess_still: 
+        percent = pl.percentile(model.input_data['effective_sample_size'][non_missing_ess_still], 10.)
+        missing_ess_still = pl.isnan(model.input_data['effective_sample_size'])==1 # finds all nan 
+        # replace nan effective sample size with 10th percentile 
+        model.input_data['effective_sample_size'][missing_ess_still] = percent
+    
     # change values of 0 in lognormal model to 1 observation
     if rate_type == 'log_normal':
         # find indices where values are 0
-        ix = [i for i, x in enumerate(list(model.input_data['value'])) if x == 0]
+        zero_val = (model.input_data['value'] == 0)
         # add 1 observation so no values are zero, also change effective sample size
-        model.input_data['effective_sample_size'][ix] = model.input_data['effective_sample_size'][ix] + 1
-        model.input_data['value'][ix] = 1.0/model.input_data['effective_sample_size'][ix]
+        model.input_data['effective_sample_size'][zero_val] = model.input_data['effective_sample_size'][zero_val] + 1
+        model.input_data['value'][zero_val] = 1.0/model.input_data['effective_sample_size'][zero_val]
+        # update standard error
+        model.input_data['standard_error'][zero_val] = pl.sqrt(model.input_data['value'][zero_val]*(1-model.input_data['value'][zero_val])/model.input_data['effective_sample_size'][zero_val])    
     
     return model
 
