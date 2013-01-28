@@ -82,9 +82,9 @@ try:
     output.to_csv('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + '.csv')
     
     # create and save conversion plots
-    dismod3.graphics.plot_acorr(model.vars)
+    dismod3.graphics.plot_acorr(model)
     pl.savefig('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + 'acorr.pdf')
-    dismod3.graphics.plot_trace(model.vars)
+    dismod3.graphics.plot_trace(model)
     pl.savefig('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + 'trace.pdf')    
 
     # save statistic types (only for 1st replicate)
