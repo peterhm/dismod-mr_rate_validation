@@ -39,7 +39,7 @@ def dm3rep_initialize(model_num, data_type, area, default=False):
     .. Note :: If default is False, parameter files must be filled.
     '''
     cwd = os.getcwd()
-    os.chdir('/homes/peterhm/dismod_cpp-20121204/build')
+    os.chdir('/homes/peterhm/dismod_spline-20130115/build')
     # creates data
     os.system('bin/get_data.py %s' %model_num)
     # creates necessary files
