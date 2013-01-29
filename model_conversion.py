@@ -13,12 +13,15 @@ reload(mu)
 integrand = {'p': 'prevalence', 
              'i': 'incidence', 
              'r': 'remission', 
-             'f': 'f', 
-             'pf': 'f', 
-             'csmr': 'f', 
-             'rr': 'f', 
-             'smr': 'f', 
-             'X': 'f'}
+             'f': 'n_excess', 
+             'pf': 'r_prevalence', 
+             'csmr': 'r_specific', 
+             'm_all': 'r_all'
+             'm_with': 'r_with'
+             'HELP': 'r_other'
+             'smr': 'r_standard', 
+             'rr': 'relative_risk', 
+             'X': 'duration'}
 
 def dm3rep_initialize(model_num, data_type, area, default=False):
     '''
@@ -168,5 +171,6 @@ def data_area(dm3, data_type, model_num):
         elif dm3.input_data.ix[i,'area'] in superregion:
             data_in['m_super'] = dm3.input_data.ix[i,'area']
 
-
+def data_cov(dm3, data_type):
+    return dm3
 
