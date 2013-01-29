@@ -19,9 +19,9 @@ def convert_data_type(data_type):
                  'f': 'r_excess', 
                  'pf': 'r_prevalence', 
                  'csmr': 'r_specific', 
-                 'm_all': 'r_all'
-                 'm_with': 'r_with'
-                 'm': 'r_other'
+                 'm_all': 'r_all',
+                 'm_with': 'r_with',
+                 'm': 'r_other',
                  'smr': 'r_standard', 
                  'rr': 'relative_risk', 
                  'X': 'duration'}
@@ -30,7 +30,8 @@ def convert_data_type(data_type):
 def empty_data_in(ix):
     return pandas.DataFrame(index=ix, columns=['integrand', 'meas_value', 'meas_stdev', 'sex', 'age_lower', 'age_upper', 'time_lower', 'time_upper', 'm_sub', 'm_region', 'm_super', 'x_sex'], dtype=object)
     
-# def data_cov()
+def data_cov():
+    dm3.input_data.filter(like='x_')
    
 def build_data_in(dm3, data_type):
     # create data_in csv with appropriate fields
