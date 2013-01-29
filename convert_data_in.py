@@ -30,10 +30,7 @@ def convert_data_type(data_type):
 def empty_data_in(ix):
     return pandas.DataFrame(index=ix, columns=['integrand', 'meas_value', 'meas_stdev', 'sex', 'age_lower', 'age_upper', 'time_lower', 'time_upper', 'm_sub', 'm_region', 'm_super', 'x_sex'], dtype=object)
     
-def data_cov():
-    dm3.input_data.filter(like='x_')
-   
-def build_data_in(dm3, data_type):
+def build_data_in(dm3, data_type, model_num):
     # create data_in csv with appropriate fields
     data_in = data(dm3, data_type)
     data_in = data_in.append(data_area(dm3, data_type, model_num), ignore_index=True)
@@ -50,6 +47,7 @@ def data(dm3, data_type):
     data_in['time_lower'] = dm3.input_data['year_start']
     data_in['time_upper'] =  dm3.input_data['year_end']
     data_in['x_sex'] = dm3.input_data['sex'].map(dict(male=.5, female=-.5, total=0))
+    data_in = data_in.append(model.input_data.filter(like='x_'))
     # find standard error and use it for standard deviation
     dm3 = mu.create_uncertainty(dm3, 'log_normal')
     data_in['meas_stdev'] = dm3.input_data['standard_error']
