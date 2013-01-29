@@ -17,7 +17,10 @@ area = 'europe_western'
 data_type = 'p'
 
 # delete files in /clustertmp/dismod
-os.system(rm /clustertmp/dismod/*)
+cwd = os.getcwd()
+os.chdir('/clustertmp/dismod/')
+os.system('rm *')
+os.chdir('%s' %cwd)
 
 # load best models spread sheet
 bm_path = '/snfs1/Project/GBD/dalynator/yld/best_models.csv'
