@@ -16,6 +16,9 @@ replicates = int(sys.argv[1])
 area = 'europe_western'
 data_type = 'p'
 
+# delete files in /clustertmp/dismod
+os.system(rm /clustertmp/dismod/*)
+
 # load best models spread sheet
 bm_path = '/snfs1/Project/GBD/dalynator/yld/best_models.csv'
 bm_csv = pandas.read_csv(bm_path,index_col=None)
