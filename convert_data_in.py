@@ -12,6 +12,21 @@ reload(dismod3)
 import model_utilities as mu
 reload(mu)
 
+def convert_data_type(data_type):
+    integrand = {'p': 'prevalence', 
+                 'i': 'incidence', 
+                 'r': 'remission', 
+                 'f': 'r_excess', 
+                 'pf': 'r_prevalence', 
+                 'csmr': 'r_specific', 
+                 'm_all': 'r_all'
+                 'm_with': 'r_with'
+                 'm': 'r_other'
+                 'smr': 'r_standard', 
+                 'rr': 'relative_risk', 
+                 'X': 'duration'}
+    return integrand[data_type]
+
 def empty_data_in(ix):
     return pandas.DataFrame(index=ix, columns=['integrand', 'meas_value', 'meas_stdev', 'sex', 'age_lower', 'age_upper', 'time_lower', 'time_upper', 'm_sub', 'm_region', 'm_super', 'x_sex'], dtype=object)
     
@@ -26,7 +41,7 @@ def build_data_in(dm3, data_type):
 def data(dm3, data_type):
     # create data file
     data_in = empty_data_in(dm3.input_data.index)
-    data_in['integrand'] = integrand[data_type]
+    data_in['integrand'] = convert_data_type(data_type)
     data_in['meas_value'] = dm3.input_data['value']
     data_in['sex'] = dm3.input_data['sex']
     data_in['age_lower'] = dm3.input_data['age_start']

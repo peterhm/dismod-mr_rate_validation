@@ -15,18 +15,7 @@ reload(c_prior)
 import convert_data_in as c_data
 reload(c_data)
 
-integrand = {'p': 'prevalence', 
-             'i': 'incidence', 
-             'r': 'remission', 
-             'f': 'r_excess', 
-             'pf': 'r_prevalence', 
-             'csmr': 'r_specific', 
-             'm_all': 'r_all'
-             'm_with': 'r_with'
-             'm': 'r_other'
-             'smr': 'r_standard', 
-             'rr': 'relative_risk', 
-             'X': 'duration'}
+
 
 def dm3rep_initialize(model_num, data_type, area, default=False):
     '''
@@ -51,7 +40,7 @@ def dm3rep_initialize(model_num, data_type, area, default=False):
     # creates data
     os.system('bin/get_data.py %s' %model_num)
     # creates necessary files
-    if default == True: os.system('bin/fit.sh %s %s' %(model_num, integrand[data_type])) # creates brad's default files
+    if default == True: os.system('bin/fit.sh %s %s' %(model_num, c_data.convert_data_type(data_type))) # creates brad's default files
     else:
         # load data structure
         dm3 = mu.load_new_model(model_num, area, data_type)
