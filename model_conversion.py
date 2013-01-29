@@ -13,12 +13,12 @@ reload(mu)
 integrand = {'p': 'prevalence', 
              'i': 'incidence', 
              'r': 'remission', 
-             'f': 'n_excess', 
+             'f': 'r_excess', 
              'pf': 'r_prevalence', 
              'csmr': 'r_specific', 
              'm_all': 'r_all'
              'm_with': 'r_with'
-             'HELP': 'r_other'
+             'm': 'r_other'
              'smr': 'r_standard', 
              'rr': 'relative_risk', 
              'X': 'duration'}
