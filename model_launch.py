@@ -19,7 +19,7 @@ data_type = 'p'
 # delete files in /clustertmp/dismod
 cwd = os.getcwd()
 os.chdir('/clustertmp/dismod/')
-os.system('rm *')
+os.system('rm model_*')
 os.chdir('%s' %cwd)
 
 # load best models spread sheet
