@@ -44,7 +44,6 @@ def build_data_in(dm3, data_type, model_num):
     data_in['time_lower'] = dm3.input_data['year_start']
     data_in['time_upper'] =  dm3.input_data['year_end'] + 1.0
     data_in['x_sex'] = dm3.input_data['sex'].map(dict(male=.5, female=-.5, total=0))
-    #data_in = data_in.append(dm3.input_data.filter(like='x_'))
     # create data hierarchy
     model = mu.load_new_model(model_num, 'all', data_type)
     superregion = set(model.hierarchy.neighbors('all'))
