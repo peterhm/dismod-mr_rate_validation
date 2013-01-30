@@ -35,6 +35,10 @@ def build_data_in(dm3, data_type, model_num):
     dm3 = mu.create_uncertainty(dm3, 'log_normal')
     # create data file
     data_in = empty_data_in(dm3.input_data.index)
+    # add covariates
+    cov = dm3.input_data.filter(like='x_')
+    data_in = data_in.join(pandas.DataFrame(cov,columns=['']))
+    # add data
     data_in['integrand'] = convert_data_type(data_type)
     data_in['meas_value'] = dm3.input_data['value']
     data_in['meas_stdev'] = dm3.input_data['standard_error']
