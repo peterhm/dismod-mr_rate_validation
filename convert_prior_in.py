@@ -18,6 +18,10 @@ def build_prior_in(dm3, data_type):
     prior_in = prior_level(dm3, data_type)
     # create 'dknot' from 'increasing' and 'decreasing'
     prior_in = prior_in.append(prior_direction(dm3, data_type), ignore_index=True)
+    # create m_sub information
+    #prior_in = prior_in.append()
+    # create covariate prior information
+    prior_in = prior_in.append(prior_cov(dm3, data_type), ignore_index=True)
     return prior_in
 
 def empty_prior_in(ix):
@@ -72,5 +76,44 @@ def prior_direction(dm3, data_type):
     prior_in['mean'] = prior_in['mean'].fillna(0.)
     return prior_in    
     
-def prior_m_area(dm3):
-    areas = dm3.hierarchy.node.keys()
+def prior_m_area(dm3, model_num, data_type):
+    prior_in = empty_prior_in(dm3.input_data.index)
+    prior_in['name'] = dm3.input_data['area']
+    
+    ['lower', 'upper', 'mean', 'std']
+    # create hierarchy
+    model = mu.load_new_model(model_num, 'all', data_type)
+    superregion = set(model.hierarchy.neighbors('all'))
+    region = set(pl.flatten([model.hierarchy.neighbors(sr) for sr in model.hierarchy.neighbors('all')]))
+    country = set(pl.flatten([[model.hierarchy.neighbors(r) for r in model.hierarchy.neighbors(sr)] for sr in model.hierarchy.neighbors('all')]))
+    # create data area levels
+    for i in dm3.input_data.index:
+        if dm3.input_data.ix[i,'area'] in country:
+            prior_in.ix[i,'type'] = 'm_sub'
+        elif dm3.input_data.ix[i,'area'] in region:
+            prior_in.ix[i,'type'] = 'm_region'
+        elif dm3.input_data.ix[i,'area'] in superregion:
+            prior_in.ix[i,'type'] = 'm_super'
+    return prior_in
+    
+def prior_cov(dm3, data_type):
+    cov = list(dm3.input_data.filter(like='x_'))
+    cov.append('x_sex')
+    prior_in = empty_prior_in(range(len(cov)))
+    prior_in['type'] = 'cov'
+    for i,c in enumerate(cov):
+        prior_in.ix[i,'name'] = c
+        try:
+            prior_in.ix[i,'mean'] = dm3.parameters[data_type]['fixed_effects'][c]['mu']
+            prior_in.ix[i,'std'] = dm3.parameters[data_type]['fixed_effects'][c]['sigma']
+            prior_in['lower'] = dm3.parameters[data_type]['fixed_effects'][c]['mu'] - 10.
+            prior_in['upper'] = dm3.parameters[data_type]['fixed_effects'][c]['mu'] + 10.
+        except KeyError:
+            prior_in['mean'] = 0.
+            prior_in['std'] = pl.inf
+            prior_in['lower'] = -10.
+            prior_in['upper'] = 10.
+    return prior_in
+
+
+
