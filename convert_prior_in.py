@@ -12,14 +12,14 @@ reload(dismod3)
 import model_utilities as mu
 reload(mu)
 
-def build_prior_in(dm3, data_type):
+def build_prior_in(dm3, data_type, model_num):
     # create prior_in csv with appropriate fields
     # create 'knot' from 'level bounds' and 'level values' 
     prior_in = prior_level(dm3, data_type)
     # create 'dknot' from 'increasing' and 'decreasing'
     prior_in = prior_in.append(prior_direction(dm3, data_type), ignore_index=True)
     # create m_sub information
-    #prior_in = prior_in.append()
+    prior_in = prior_in.append(prior_m_area(dm3, model_num, data_type), ignore_index=True)
     # create covariate prior information
     prior_in = prior_in.append(prior_cov(dm3, data_type), ignore_index=True)
     return prior_in
@@ -77,8 +77,8 @@ def prior_direction(dm3, data_type):
     return prior_in    
     
 def prior_m_area(dm3, model_num, data_type):
-    prior_in = empty_prior_in(dm3.input_data.index)
-    prior_in['name'] = dm3.input_data['area']
+    prior_in = empty_prior_in(pl.unique(dm3.input_data['area']).index)
+    prior_in['name'] = pl.unique(dm3.input_data['area'])
     
     ['lower', 'upper', 'mean', 'std']
     # create hierarchy
@@ -87,7 +87,7 @@ def prior_m_area(dm3, model_num, data_type):
     region = set(pl.flatten([model.hierarchy.neighbors(sr) for sr in model.hierarchy.neighbors('all')]))
     country = set(pl.flatten([[model.hierarchy.neighbors(r) for r in model.hierarchy.neighbors(sr)] for sr in model.hierarchy.neighbors('all')]))
     # create data area levels
-    for i in dm3.input_data.index:
+    for i in pl.unique(dm3.input_data['area']).index:
         if dm3.input_data.ix[i,'area'] in country:
             prior_in.ix[i,'type'] = 'm_sub'
         elif dm3.input_data.ix[i,'area'] in region:
