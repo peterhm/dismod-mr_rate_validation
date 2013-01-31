@@ -14,8 +14,10 @@ reload(mu)
 
 def build_prior_in(dm3, data_type, model_num):
     # create prior_in csv with appropriate fields
+    # create noise parameters
+    prior_in = prior_noise(dm3, data_type)
     # create 'knot' from 'level bounds' and 'level values' 
-    prior_in = prior_level(dm3, data_type)
+    prior_in = prior_in.append(prior_level(dm3, data_type), ignore_index=True)
     # create 'dknot' from 'increasing' and 'decreasing'
     prior_in = prior_in.append(prior_direction(dm3, data_type), ignore_index=True)
     # create m_sub information
@@ -30,6 +32,45 @@ def empty_prior_in(ix):
     # and an index of specified length
     return pandas.DataFrame(index=ix, columns=['type', 'name', 'lower', 'upper', 'mean', 'std'], dtype=object)
 
+def prior_noise(dm3, data_type):
+    prior_in = empty_prior_in(range(6))
+    prior_in['type'] = 'noise'
+    # create xi from smoothness (values from ism.py)
+    smoothing_dict = {'No Prior':pl.inf, 'Slightly':.5, 'Moderately': .05, 'Very': .005}
+    prior_in.ix[0,'name'] = 'xi'
+    prior_in.ix[0,'mean'] = smoothing_dict[dm3.parameters[data_type]['smoothness']['amount']]
+    prior_in.ix[0,'std'] = pl.inf
+    prior_in.ix[0,'lower'] = 0.
+    prior_in.ix[0,'upper'] = 1.
+    # create tau_zero from data heterogeneity
+    hetero_dict = {'No Prior':pl.inf, 'Slightly':.05, 'Moderately': .25, 'Very': 1.}
+    prior_in.ix[1,'name'] = 'tau_zero'
+    prior_in.ix[1,'mean'] = hetero_dict[dm3.parameters[data_type]['heterogeneity']]
+    prior_in.ix[1,'std'] = pl.inf
+    prior_in.ix[1,'lower'] = hetero_dict[dm3.parameters[data_type]['heterogeneity']]
+    prior_in.ix[1,'upper'] = hetero_dict[dm3.parameters[data_type]['heterogeneity']]
+    # create tau_one using 'z_*' covariates
+    prior_in.ix[2,'name'] = 'tau_one'
+    if dm3.input_data.filter(like='z_').columns == 0:
+        prior_in.ix[2,'mean'] = 0.
+        prior_in.ix[2,'std'] = pl.inf
+        prior_in.ix[2,'lower'] = 0.
+        prior_in.ix[2,'upper'] = 0.
+    else:
+        prior_in.ix[2,'mean'] = 1.
+        prior_in.ix[2,'std'] = pl.inf
+        prior_in.ix[2,'lower'] = 1.
+        prior_in.ix[2,'upper'] = 1.
+    # create gamma_* priors
+    prior_in.ix[3,'name'] = 'gamma_sub'
+    prior_in.ix[4,'name'] = 'gamma_region'
+    prior_in.ix[5,'name'] = 'gamma_super'
+    prior_in.ix[3:5,'mean'] = .05
+    prior_in.ix[3:5,'std'] = 1.
+    prior_in.ix[3:5,'lower'] = .01
+    prior_in.ix[3:5,'upper'] = 1.
+    return prior_in
+    
 def prior_level(dm3, data_type):
     # create 'knot' from 'level bounds' and 'level values' 
     prior_in = empty_prior_in(range(len(dm3.parameters[data_type]['parameter_age_mesh'])))
@@ -77,10 +118,13 @@ def prior_direction(dm3, data_type):
     return prior_in    
     
 def prior_m_area(dm3, model_num, data_type):
+    # create 'm_sub'/'m_region' from unique input_data['area']
     prior_in = empty_prior_in(pl.unique(dm3.input_data['area']).index)
     prior_in['name'] = pl.unique(dm3.input_data['area'])
-    
-    ['lower', 'upper', 'mean', 'std']
+    prior_in['mean'] = 0.
+    prior_in['std'] = 1.
+    prior_in['lower'] = 0.
+    prior_in['upper'] = 0.
     # create hierarchy
     model = mu.load_new_model(model_num, 'all', data_type)
     superregion = set(model.hierarchy.neighbors('all'))
@@ -97,6 +141,7 @@ def prior_m_area(dm3, model_num, data_type):
     return prior_in
     
 def prior_cov(dm3, data_type):
+    # define covariates in model
     cov = list(dm3.input_data.filter(like='x_'))
     cov.append('x_sex')
     prior_in = empty_prior_in(range(len(cov)))
