@@ -38,6 +38,9 @@ def build_data_in(dm3, data_type, model_num):
     # add covariates
     cov = dm3.input_data.filter(like='x_')
     data_in = data_in.join(pandas.DataFrame(cov,columns=['']))
+    cov_z = dm3.input_data.filter(like='z_')
+    if len(cov_z.columns) != 0:
+        data_in = data_in.join(pandas.DataFrame(cov_z,columns=['']))
     # add data
     data_in['integrand'] = convert_data_type(data_type)
     data_in['meas_value'] = dm3.input_data['value']

@@ -142,8 +142,11 @@ def prior_m_area(dm3, model_num, data_type):
     
 def prior_cov(dm3, data_type):
     # define covariates in model
-    cov = list(dm3.input_data.filter(like='x_'))
+    cov = list(dm3.input_data.filter(like='x_').columns)
     cov.append('x_sex')
+    cov_z = list(dm3.input_data.filter(like='z_').columns)
+    if len(cov_z) != 0:
+        cov = cov + cov_z
     prior_in = empty_prior_in(range(len(cov)))
     prior_in['type'] = 'cov'
     for i,c in enumerate(cov):
