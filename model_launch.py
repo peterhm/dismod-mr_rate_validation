@@ -41,7 +41,7 @@ name_list = []
 for m in model_choices:
     m = int(m)
     try:
-        # check that model has more than 100 prevalence points 
+        # check that model has more than 4 prevalence points 
         model = mu.load_new_model(m, area, data_type)
         if len(model.input_data['data_type'].index) >= 4: model_list.append(m)
         for r in rate_types:
