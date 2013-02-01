@@ -38,10 +38,13 @@ def prior_noise(dm3, data_type):
     # create xi from smoothness (values from ism.py)
     smoothing_dict = {'No Prior':pl.inf, 'Slightly':.5, 'Moderately': .05, 'Very': .005}
     prior_in.ix[0,'name'] = 'xi'
-    prior_in.ix[0,'mean'] = smoothing_dict[dm3.parameters[data_type]['smoothness']['amount']]
     prior_in.ix[0,'std'] = pl.inf
     prior_in.ix[0,'lower'] = 0.
     prior_in.ix[0,'upper'] = 1.
+    try:
+        prior_in.ix[0,'mean'] = smoothing_dict[dm3.parameters[data_type]['smoothness']['amount']]
+    except KeyError:
+        prior_in.ix[0,'mean'] = 0.
     # create tau_zero from data heterogeneity
     hetero_dict = {'No Prior':pl.inf, 'Slightly':.05, 'Moderately': .25, 'Very': 1.}
     prior_in.ix[1,'name'] = 'tau_zero'
@@ -57,10 +60,10 @@ def prior_noise(dm3, data_type):
         prior_in.ix[2,'lower'] = 0.
         prior_in.ix[2,'upper'] = 0.
     else:
-        prior_in.ix[2,'mean'] = 1.
-        prior_in.ix[2,'std'] = pl.inf
-        prior_in.ix[2,'lower'] = 1.
-        prior_in.ix[2,'upper'] = 1.
+        prior_in.ix[2,'mean'] = 0.
+        prior_in.ix[2,'std'] = .25
+        prior_in.ix[2,'lower'] = -pl.inf
+        prior_in.ix[2,'upper'] = pl.inf
     # create gamma_* priors
     prior_in.ix[3,'name'] = 'gamma_sub'
     prior_in.ix[4,'name'] = 'gamma_region'
