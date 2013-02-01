@@ -66,9 +66,9 @@ def prior_noise(dm3, data_type):
     prior_in.ix[4,'name'] = 'gamma_region'
     prior_in.ix[5,'name'] = 'gamma_super'
     prior_in.ix[3:5,'mean'] = .05
-    prior_in.ix[3:5,'std'] = 1.
-    prior_in.ix[3:5,'lower'] = .01
-    prior_in.ix[3:5,'upper'] = 1.
+    prior_in.ix[3:5,'std'] = .03
+    prior_in.ix[3:5,'lower'] = .05
+    prior_in.ix[3:5,'upper'] = .5
     return prior_in
     
 def prior_level(dm3, data_type):
@@ -123,8 +123,8 @@ def prior_m_area(dm3, model_num, data_type):
     prior_in['name'] = pl.unique(dm3.input_data['area'])
     prior_in['mean'] = 0.
     prior_in['std'] = 1.
-    prior_in['lower'] = 0.
-    prior_in['upper'] = 0.
+    prior_in['lower'] = -1.
+    prior_in['upper'] = 1.
     # create hierarchy
     model = mu.load_new_model(model_num, 'all', data_type)
     superregion = set(model.hierarchy.neighbors('all'))
@@ -154,13 +154,13 @@ def prior_cov(dm3, data_type):
         try:
             prior_in.ix[i,'mean'] = dm3.parameters[data_type]['fixed_effects'][c]['mu']
             prior_in.ix[i,'std'] = dm3.parameters[data_type]['fixed_effects'][c]['sigma']
-            prior_in['lower'] = dm3.parameters[data_type]['fixed_effects'][c]['mu'] - 10.
-            prior_in['upper'] = dm3.parameters[data_type]['fixed_effects'][c]['mu'] + 10.
+            prior_in['lower'] = -pl.inf
+            prior_in['upper'] = pl.inf
         except KeyError:
             prior_in['mean'] = 0.
-            prior_in['std'] = pl.inf
-            prior_in['lower'] = -10.
-            prior_in['upper'] = 10.
+            prior_in['std'] = 1.
+            prior_in['lower'] = -pl.inf
+            prior_in['upper'] = pl.inf
     return prior_in
 
 
