@@ -39,7 +39,7 @@ def build_param_in(dm3, thin, iter, replicate):
         param_in.ix[8] = 'tau_one_cov',
     return param_in
 
-def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, path, bare_bones=False):
+def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False):
     '''
     Parameters
     ----------
@@ -56,8 +56,6 @@ def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, path, b
       number of iterations in MCMC
     replicate : int
       number for random number
-    path : str
-      path to save parameter files in
     bare_bones : bool
       True creates minimalist files, False uses DisMod-MR values, default set to False
     Results
@@ -65,8 +63,9 @@ def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, path, b
     gets data and builds necessary files
     .. Note :: If bare_bones is False, parameter files must be filled.
     '''
+    ds_loc = '/homes/peterhm/dismod_spline-20130115/build'
     cwd = os.getcwd()
-    os.chdir('/homes/peterhm/dismod_spline-20130115/build')
+    os.chdir('%s' %ds_loc)
     # creates necessary files
     if bare_bones == True: 
         # creates data
@@ -75,14 +74,15 @@ def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, path, b
         # load data structure
         dm3 = mu.load_new_model(model_num, area, data_type)
         # create required files
-        prior_in = c_prior.build_prior_in(dm3, data_type, model_num)
-        prior_in.to_csv(path + '%s_prior_in.csv'%(model_num),index=False)
-        parameter_in = build_param_in(dm3, thin, iter, replicate)
-        parameter_in.to_csv(path + '%s_parameter_in.csv'%(model_num),index=False)
         data_in = c_data.build_data_in(dm3, data_type, model_num)
-        data_in.to_csv(path + '%s_prior_in.csv'%(model_num),index=False)
+        prior_in = c_prior.build_prior_in(dm3, data_type, model_num)
+        parameter_in = build_param_in(dm3, thin, iter, replicate)
+        # save files
+        os.system('mkdir fit/%s' %model_num)
+        data_in.to_csv(ds_loc + '/fit/%s/data_in.csv'%(model_num),index=False)
+        prior_in.to_csv(ds_loc + '/fit/%s/prior_in.csv'%(model_num),index=False)
+        parameter_in.to_csv(ds_loc + '/fit/%s/parameter_in.csv'%(model_num),index=False)
     # return to working directory
     os.chdir('%s' %cwd)
-    # return dataframes to add
     
 

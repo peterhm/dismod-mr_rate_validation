@@ -47,6 +47,7 @@ if rate_type == 'log_offset':
     os.system('bin/fit.sh %s %s' %(model_num, data_type_full)) # this need 
     os.system('cd fit/%s ../../src/bin/dismod_spline parameter_in.csv prior_in.csv data_in.csv sample_out.csv info_out.csv' %model_num) # default values in input files
     os.system('burn_in=0.1 ../../bin/summary.py $burn_in parameter_in.csv data_in.csv sample_out.csv statistics_out.csv data_out.csv')
+    os.system('bin/fit.sh %s %s' %(model_num, c_data.convert_data_type(data_type))) # creates brad's default files
     
 # withhold 25% of data
 model, test_ix = mu.test_train(model, data_type, replicate)
