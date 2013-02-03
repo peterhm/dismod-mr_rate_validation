@@ -39,7 +39,7 @@ def build_param_in(dm3, thin, iter, replicate):
         param_in.ix[8] = 'tau_one_cov',
     return param_in
 
-def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False):
+def ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False):
     '''
     Parameters
     ----------
