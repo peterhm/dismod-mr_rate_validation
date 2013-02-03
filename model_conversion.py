@@ -78,7 +78,7 @@ def dm3rep_initialize(model_num, data_type, area, thin, iter, replicate, bare_bo
         prior_in = c_prior.build_prior_in(dm3, data_type, model_num)
         parameter_in = build_param_in(dm3, thin, iter, replicate)
         # save files
-        os.system('if [ ! -d 39665 ]; mkdir fit/%s ; fi' %model_num)
+        if not os.path.exists('./fit/%s'%model_num): os.makedirs('./fit/%s'%model_num)
         data_in.to_csv(ds_loc + '/fit/%s/data_in.csv'%(model_num),index=False)
         prior_in.to_csv(ds_loc + '/fit/%s/prior_in.csv'%(model_num),index=False)
         parameter_in.to_csv(ds_loc + '/fit/%s/parameter_in.csv'%(model_num),index=False)
