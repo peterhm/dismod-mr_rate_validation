@@ -4,11 +4,9 @@
 \begin{document}
 
 {% for k in klist%}
-\begin{figure}[ht] 
+Acorr and trace for model {k}
 \includegraphics[width=.5\textheight,natwidth=12in,natheight=9in]{model_comparison_{{k}}acorr.pdf} 
 \includegraphics[width=.5\textheight]{model_comparison_{{k}}trace.pdf} 
-\caption{ $ {{k}} $ } 
-\end{figure}
 {% endfor %}
 
 \end{document}
