@@ -1,12 +1,13 @@
-\documentclass[12pt]{memoir} 
+\documentclass[landscape, 12pt]{memoir} 
 \usepackage{graphicx} 
 \graphicspath{ {{path}} } 
 \begin{document}
 
 {% for k in klist%}
-Acorr and trace for model $ {{k}} $
-\includegraphics[width=.5\textheight,natwidth=12in,natheight=9in]{model_comparison_{{k}}acorr.pdf} 
+Acorr and trace for model \verb|{{k}}|\\
+\includegraphics[width=.5\textheight,natwidth=12in,natheight=9in]{model_comparison_{{k}}acorr.pdf}
 \includegraphics[width=.5\textheight]{model_comparison_{{k}}trace.pdf} 
+\newpage
 {% endfor %}
 
 \end{document}
