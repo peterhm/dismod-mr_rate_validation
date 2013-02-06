@@ -23,9 +23,9 @@ area = 'europe_western'
 data_type = 'p'
 data_type_full = 'prevalence'
 
-iter=25000
-burn=5000
-thin=5
+iter=50000
+burn=25000
+thin=10000
 
 # create output structures
 stats = ['seed', 'bias_' + rate_type, 'rmse_' + rate_type, 'mae_' + rate_type, 'mare_' + rate_type, 'pc_' + rate_type, 'time_' + rate_type]
@@ -33,21 +33,18 @@ output = pandas.DataFrame(pl.zeros((1, len(stats))), columns=stats)
 output['seed'] = replicate
 failure = []
 
-# load new model
-model = mu.load_new_model(model_num, area, data_type)
-
-# fill any missing covariate data with 0s
-for cv in list(model.input_data.filter(like='x_').columns):
-    model.input_data[cv] = model.input_data[cv].fillna([0])
-
-# replace invalid uncertainty with 10% of data set
-model = mu.create_uncertainty(model, rate_type)
-
 if rate_type == 'log_offset':
     modc.ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False)
-
-# withhold 25% of data
-model, test_ix = mu.test_train(model, data_type, replicate)
+else:
+    # load new model
+    model = mu.load_new_model(model_num, area, data_type)
+    # fill any missing covariate data with 0s
+    for cv in list(model.input_data.filter(like='x_').columns):
+        model.input_data[cv] = model.input_data[cv].fillna([0])
+    # replace invalid uncertainty with 10% of data set
+    model = mu.create_uncertainty(model, rate_type)
+    # withhold 25% of data
+    model, test_ix = mu.test_train(model, data_type, replicate)
 
 try:
     # create pymc nodes for model and fit the model
@@ -81,9 +78,9 @@ try:
     
     # create and save conversion plots
     dismod3.graphics.plot_acorr(model)
-    pl.savefig('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + 'acorr.pdf')
+    pl.savefig('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + 'acorr.png')
     dismod3.graphics.plot_trace(model)
-    pl.savefig('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + 'trace.pdf')    
+    pl.savefig('/clustertmp/dismod/model_comparison_' + str(model_num) + rate_type + str(replicate) + 'trace.png')    
 
     # save statistic types (only for 1st replicate)
     if replicate == 0:
