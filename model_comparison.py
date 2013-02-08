@@ -25,7 +25,7 @@ data_type_full = 'prevalence'
 
 iter=50000
 burn=25000
-thin=10000
+thin=1000
 
 # create output structures
 stats = ['seed', 'bias_' + rate_type, 'rmse_' + rate_type, 'mae_' + rate_type, 'mare_' + rate_type, 'pc_' + rate_type, 'time_' + rate_type]
