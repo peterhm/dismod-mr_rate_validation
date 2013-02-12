@@ -30,14 +30,14 @@ def load_new_model(num, area, data_type):
     model.input_data = model.get_data(data_type)
     return model
 
-def test_train(model, data_type, replicate):
+def test_train(data, data_type, rate_type, replicate):
     ''' splits data into testing and training data sets 
     testing sets have effective sample size = 0 and standard error = inf
     returns the model, the test set indices and the test set indices of the test set
     Parameters
     ----------
-    model : data.ModelData
-      dismod model
+    data : pandas dataframe
+      dataframe of data
     data_type : str
       one of the epidemiologic parameters allowed
       'p', 'i', 'r', 'f', 'pf', 'csmr', 'rr', 'smr', 'X'
@@ -53,13 +53,17 @@ def test_train(model, data_type, replicate):
     # save seed
     random.seed(1234567 + replicate)
     # choose random selection (25%) of data
-    ix = list(model.input_data.index)
-    withhold = int(len(model.input_data.index)/4)
+    ix = list(data.index)
+    withhold = int(len(data.index)/4)
     test_ix = random.sample(ix, withhold)
-    # change effective sample size and standard error of random selection
-    model.input_data.ix[test_ix, 'effective_sample_size'] = 0
-    model.input_data.ix[test_ix, 'standard_error'] = pl.inf
-    return model, test_ix
+    if rate_type == 'log_offset':
+        # change standard error of random selection
+        data.ix[test_ix, 'meas_stdev'] = pl.inf
+    else:
+        # change effective sample size and standard error of random selection
+        data.ix[test_ix, 'effective_sample_size'] = 0
+        data.ix[test_ix, 'standard_error'] = pl.inf
+    return data, test_ix
 
 def create_uncertainty(model, rate_type):
     '''data without valid uncertainty is given the 10% uncertainty of the data set

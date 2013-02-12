@@ -13,6 +13,7 @@ reload(dismod3)
 model_num = 40418
 test_area = 'europe_western'
 data_type = 'p'
+rate_type='binom'
 
 # example model0, to test vars and test-train
 model = mu.load_new_model(model_num, test_area, data_type)
@@ -62,9 +63,9 @@ def test_uncertainty_normal():
     assert pl.all(model1.input_data['standard_error'] >= 0)
 
 # now that uncertainty tests passed, can test test_train function and creation of vars
-model, test_ix = mu.test_train(model, data_type, 23)
-model1, test_ix1 = mu.test_train(model1, data_type, 23)
-model.vars += dismod3.ism.age_specific_rate(model, data_type, test_area, 'male', 2005, rate_type='binom')
+model.input_data, test_ix = mu.test_train(model.input_data, data_type, rate_type, 23)
+model1.input_data, test_ix1 = mu.test_train(model1.input_data, data_type, rate_type, 23)
+model.vars += dismod3.ism.age_specific_rate(model, data_type, test_area, 'male', 2005, rate_type=rate_type)
 
 def test_test_train_se():
     assert pl.all(model1.input_data.ix[test_ix1,'standard_error'] == pl.inf)

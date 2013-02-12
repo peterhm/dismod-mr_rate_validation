@@ -35,14 +35,15 @@ failure = []
 
 if rate_type == 'log_offset':
     modc.ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False)
+    # withhold 25% of data
+    data_in, test_ix = mu.test_train(data_in, data_type, rate_type, replicate)
 else:
     # load new model
     model = mu.load_new_model(model_num, area, data_type)
     # replace invalid uncertainty with 10% of data set
     model = mu.create_uncertainty(model, rate_type)
-
-# withhold 25% of data
-model, test_ix = mu.test_train(model, data_type, replicate)
+    # withhold 25% of data
+    model.input_data, test_ix = mu.test_train(model.input_data, data_type, rate_type, replicate)
 
 try:
     # create pymc nodes for model and fit the model
