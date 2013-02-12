@@ -46,18 +46,20 @@ else:
     model.input_data, test_ix = mu.test_train(model.input_data, data_type, rate_type, replicate)
 
 try:
-    # create pymc nodes for model and fit the model
-    model.vars += dismod3.ism.age_specific_rate(model, data_type, area, 'male', 2005, rate_type=rate_type)
-    # fit the model, using a hill-climbing alg to find an initial value
-    # and then sampling from the posterior with MCMC
-    start = time.clock()
-    dismod3.fit.fit_asr(model, data_type, iter=iter, thin=thin, burn=burn)
-    elapsed = (time.clock() - start)
-    
-    # extract posterior predicted values for data
-    pred = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['mean'], columns=['mean'], index=model.input_data.index)
-    pred_ui = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['95% HPD interval'], columns=['lower', 'upper'], index=model.input_data.index) 
-    obs = pandas.DataFrame(model.vars[data_type]['p_obs'].value, columns=['value'], index=model.input_data.index)
+    if rate_type == 'log_offset':
+        print 'log_offset'
+    else: 
+        # create pymc nodes for model and fit the model
+        model.vars += dismod3.ism.age_specific_rate(model, data_type, area, 'male', 2005, rate_type=rate_type)
+        # fit the model, using a hill-climbing alg to find an initial value
+        # and then sampling from the posterior with MCMC
+        start = time.clock()
+        dismod3.fit.fit_asr(model, data_type, iter=iter, thin=thin, burn=burn)
+        elapsed = (time.clock() - start)
+        # extract posterior predicted values for data
+        pred = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['mean'], columns=['mean'], index=model.input_data.index)
+        pred_ui = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['95% HPD interval'], columns=['lower', 'upper'], index=model.input_data.index) 
+        obs = pandas.DataFrame(model.vars[data_type]['p_obs'].value, columns=['value'], index=model.input_data.index)
 
     # subset only test data
     pred_test = pred.ix[test_ix]
