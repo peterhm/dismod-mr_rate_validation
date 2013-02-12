@@ -70,6 +70,7 @@ def ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=
     if bare_bones == True: 
         # creates data
         os.system('bin/get_data.py %s' %model_num)
+        os.system('bin/fit.sh %s %s' %(model_num, c_data.convert_data_type(data_type)))
     else:
         # load data structure
         dm3 = mu.load_new_model(model_num, area, data_type)
