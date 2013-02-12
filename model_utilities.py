@@ -75,6 +75,10 @@ def create_uncertainty(model, rate_type):
     model : data.ModelData
       dismod model with measurements of uncertainty for all data
     '''
+    # fill any missing covariate data with 0s
+    for cv in list(model.input_data.filter(like='x_').columns):
+        model.input_data[cv] = model.input_data[cv].fillna([0])
+    
     # find indices that are negative for standard error and
     # calculate standard error from effective sample size 
     missing_se = pl.isnan(model.input_data['standard_error']) | (model.input_data['standard_error'] < 0)

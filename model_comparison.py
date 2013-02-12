@@ -36,10 +36,6 @@ failure = []
 # load new model
 model = mu.load_new_model(model_num, area, data_type)
 
-# fill any missing covariate data with 0s
-for cv in list(model.input_data.filter(like='x_').columns):
-    model.input_data[cv] = model.input_data[cv].fillna([0])
-
 # replace invalid uncertainty with 10% of data set
 model = mu.create_uncertainty(model, rate_type)
 
