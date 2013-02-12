@@ -21,7 +21,6 @@ replicate = int(sys.argv[3])
 
 area = 'europe_western'
 data_type = 'p'
-data_type_full = 'prevalence'
 
 iter=50000
 burn=25000
