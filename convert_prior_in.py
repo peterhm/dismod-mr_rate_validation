@@ -108,7 +108,7 @@ def prior_direction(dm3, data_type):
     if dm3.parameters[data_type]['decreasing']['age_start'] !=  dm3.parameters[data_type]['decreasing']['age_end']:
         for i,a in enumerate(dm3.parameters[data_type]['parameter_age_mesh'][:-1]):
             if (dm3.parameters[data_type]['decreasing']['age_start'] <= a < dm3.parameters[data_type]['decreasing']['age_end']):
-                prior_in.ix[i,'lower'] = - 'inf'
+                prior_in.ix[i,'lower'] = '-inf'
                 prior_in.ix[i,'upper'] = 0.
                 prior_in.ix[i,'mean'] = -1.
     prior_in['lower'] = prior_in['lower'].fillna('-inf')
