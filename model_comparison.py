@@ -4,6 +4,7 @@ matplotlib.use('AGG')
 import pylab as pl
 import pandas
 import time
+import os
 import sys
 sys.path += ['.', '..', '/homes/peterhm/gbd/', '/homes/peterhm/gbd/book'] 
 
@@ -19,6 +20,8 @@ model_num = int(sys.argv[1])
 rate_type = sys.argv[2]
 replicate = int(sys.argv[3])
 
+ds_loc = '/homes/peterhm/dismod_spline-20130115/build'
+save_loc = '/homes/peterhm/dismod_spline-20130115/build/fit/' + str(model_num)
 area = 'europe_western'
 data_type = 'p'
 
@@ -33,7 +36,7 @@ output['seed'] = replicate
 failure = []
 
 if rate_type == 'log_offset':
-    modc.ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False)
+    modc.ds_initialize(model_num, data_type, area, thin, iter, replicate, ds_loc, save_loc, bare_bones=False)
     # withhold 25% of data
     data_in, test_ix = mu.test_train(data_in, data_type, rate_type, replicate)
 else:
@@ -46,7 +49,7 @@ else:
 
 try:
     if rate_type == 'log_offset':
-        print 'log_offset'
+        os.system('%s/src/dismod_spline %s/parameter_in.csv %s/prior_in.csv %s/data_in.csv %s/sample_out.csv %s/info_out.csv' %(ds_loc, save_loc, save_loc, save_loc, save_loc, save_loc, ))
     else: 
         # create pymc nodes for model and fit the model
         model.vars += dismod3.ism.age_specific_rate(model, data_type, area, 'male', 2005, rate_type=rate_type)
