@@ -39,7 +39,10 @@ def build_param_in(dm3, thin, iter, replicate):
         param_in.ix[8] = 'tau_one_cov',
     return param_in
 
-def ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=False):
+def ds_initialize(model_num, data_type, area, thin, iter, replicate, 
+                  ds_loc='/homes/peterhm/dismod_spline-20130115/build', 
+                  save_loc='/homes/peterhm/dismod_spline-20130115/build/fit', 
+                  bare_bones=False):
     '''
     Parameters
     ----------
@@ -63,7 +66,6 @@ def ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=
     gets data and builds necessary files
     .. Note :: If bare_bones is False, parameter files must be filled.
     '''
-    ds_loc = '/homes/peterhm/dismod_spline-20130115/build'
     cwd = os.getcwd()
     os.chdir('%s' %ds_loc)
     # creates necessary files
@@ -79,10 +81,10 @@ def ds_initialize(model_num, data_type, area, thin, iter, replicate, bare_bones=
         prior_in = c_prior.build_prior_in(dm3, data_type, model_num)
         parameter_in = build_param_in(dm3, thin, iter, replicate)
         # save files
-        if not os.path.exists('./fit/%s'%model_num): os.makedirs('./fit/%s'%model_num)
-        data_in.to_csv(ds_loc + '/fit/%s/data_in.csv'%(model_num),index=False)
-        prior_in.to_csv(ds_loc + '/fit/%s/prior_in.csv'%(model_num),index=False)
-        parameter_in.to_csv(ds_loc + '/fit/%s/parameter_in.csv'%(model_num),index=False)
+        if not os.path.exists(save_loc): os.makedirs(save_loc)
+        data_in.to_csv(save_loc + '/data_in.csv',index=False)
+        prior_in.to_csv(save_loc + '/prior_in.csv',index=False)
+        parameter_in.to_csv(save_loc + '/parameter_in.csv',index=False)
     # return to working directory
     os.chdir('%s' %cwd)
     
