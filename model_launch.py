@@ -19,9 +19,9 @@ data_type = 'p'
 # delete files in /clustertmp/dismod
 cwd = os.getcwd()
 os.chdir('/clustertmp/dismod/')
-os.system('rm model_*')
+os.system('find . -name "model_*" -print0 | xargs -0 rm')
 os.chdir('%s' %cwd)
-
+assert 0
 # load best models spread sheet
 bm_path = '/snfs1/Project/GBD/dalynator/yld/best_models.csv'
 bm_csv = pandas.read_csv(bm_path,index_col=None)
