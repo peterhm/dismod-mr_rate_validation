@@ -17,10 +17,11 @@ area = 'europe_western'
 data_type = 'p'
 
 # delete files in /clustertmp/dismod
-cwd = os.getcwd()
-os.chdir('/clustertmp/dismod/')
-os.system('find . -name "model_*" -print0 | xargs -0 rm')
-os.chdir('%s' %cwd)
+# HACK: because submission crashed with omak reboot, uncomment below
+# cwd = os.getcwd()
+# os.chdir('/clustertmp/dismod/')
+# os.system('find . -name "model_*" -print0 | xargs -0 rm')
+# os.chdir('%s' %cwd)
 
 # load best models spread sheet
 bm_path = '/snfs1/Project/GBD/dalynator/yld/best_models.csv'
@@ -36,16 +37,25 @@ else:
     model_choices = dismod_models.index
     rate_types = ['neg_binom', 'normal', 'log_normal', 'binom']
 
+# HACK: because submission crashed with omak reboot 
+# at model 39674 replicate 828
+model_choices = model_choices[list(model_choices).index(39674.0):]
+
 model_list = []
 name_list = []
 for m in model_choices:
     m = int(m)
+    # HACK
+    if m == 39674: replicates = 173
+    else: replicates = int(sys.argv[1])
     try:
         # check that model has more than 4 prevalence points 
         model = mu.load_new_model(m, area, data_type)
         if len(model.input_data['data_type'].index) >= 4: model_list.append(m)
         for r in rate_types:
             for i in range(replicates):
+                # HACK
+                if m == 39674: i = i + 827
                 # create unique id for hold
                 name = r + str(m) + str(i)
                 name_list.append(name)
