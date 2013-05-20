@@ -1,6 +1,6 @@
 from __future__ import division
 import sys
-sys.path += ['.', '..', '/homes/peterhm/gbd/', '/homes/peterhm/gbd/book']
+sys.path += ['.', '..', '/homes/peterhm/gbd/', '/homes/peterhm/gbd/book', '/homes/abie/gbd_dev/gbd/']
 import pylab as pl
 import pymc as mc
 import pandas
