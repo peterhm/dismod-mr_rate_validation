@@ -78,4 +78,4 @@ for k in range(len(success)):
     f.close()
     # create pdf of compiled figures
     os.chdir('/home/j/Project/Models/dismodmr_rate_validation/validity/')
-    os.system('pdflatex /home/j/Project/Models/dismodmr_rate_validation/validity/model_convergence_graphics_' + str(model_list[k]) + '.tex')
+    #os.system('pdflatex /home/j/Project/Models/dismodmr_rate_validation/validity/model_convergence_graphics_' + str(model_list[k]) + '.tex')
