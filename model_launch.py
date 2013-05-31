@@ -43,14 +43,16 @@ for m in model_choices:
     try:
         # check that model has more than 4 prevalence points 
         model = mu.load_new_model(m, area, data_type)
-        if len(model.input_data['data_type'].index) >= 4: model_list.append(m)
-        for r in rate_types:
-            for i in range(replicates):
-                # create unique id for hold
-                name = r + str(m) + str(i)
-                name_list.append(name)
-                # submit shell
-                os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd -N ' + name + ' /home/j/Project/Models/dismodmr_rate_validation/model_comparison.sh %d %s %d' %(m, r, i))
+        if len(model.input_data['data_type'].index) >= 4:
+			
+			model_list.append(m)
+			for r in rate_types:
+				for i in range(replicates):
+					# create unique id for hold
+					name = r + str(m) + str(i)
+					name_list.append(name)
+					# submit shell
+					os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd -N ' + name + ' /home/j/Project/Models/dismodmr_rate_validation/model_comparison.sh %d %s %d' %(m, r, i))
     except IOError:
         pass
 

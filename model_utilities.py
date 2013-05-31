@@ -30,7 +30,7 @@ def load_new_model(num, area, data_type):
     model.input_data = model.get_data(data_type)
     return model
 
-def test_train(data, data_type, rate_type, replicate):
+def test_train(data, data_type, replicate):
     ''' splits data into testing and training data sets 
     testing sets have effective sample size = 0 and standard error = inf
     returns the model, the test set indices and the test set indices of the test set
@@ -56,13 +56,13 @@ def test_train(data, data_type, rate_type, replicate):
     ix = list(data.index)
     withhold = int(len(data.index)/4)
     test_ix = random.sample(ix, withhold)
-    if rate_type == 'log_offset':
-        # change standard error of random selection
-        data.ix[test_ix, 'meas_stdev'] = pl.inf
-    else:
-        # change effective sample size and standard error of random selection
-        data.ix[test_ix, 'effective_sample_size'] = 0
-        data.ix[test_ix, 'standard_error'] = pl.inf
+
+    # change effective sample size and standard error of random selection
+    data.ix[test_ix, 'effective_sample_size'] = 0
+    data.ix[test_ix, 'standard_error'] = pl.inf
+    data.ix[test_ix, 'lower_ci'] = pl.nan
+    data.ix[test_ix, 'upper_ci'] = pl.nan
+    
     return data, test_ix
 
 def create_uncertainty(model, rate_type):

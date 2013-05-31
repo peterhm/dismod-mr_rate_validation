@@ -13,15 +13,11 @@ reload(dismod3)
 
 import model_utilities as mu
 reload(mu)
-import model_conversion as modc
-reload(modc)
 
 model_num = int(sys.argv[1])
 rate_type = sys.argv[2]
 replicate = int(sys.argv[3])
 
-ds_loc = '/homes/peterhm/dismod_spline-20130115/build'
-save_loc = '/homes/peterhm/dismod_spline-20130115/build/fit/' + str(model_num)
 area = 'europe_western'
 data_type = 'p'
 
@@ -35,33 +31,25 @@ output = pandas.DataFrame(pl.zeros((1, len(stats))), columns=stats)
 output['seed'] = replicate
 failure = []
 
-if rate_type == 'log_offset':
-    modc.ds_initialize(model_num, data_type, area, thin, iter, replicate, ds_loc, save_loc, bare_bones=False)
-    # withhold 25% of data
-    data_in, test_ix = mu.test_train(data_in, data_type, rate_type, replicate)
-else:
-    # load new model
-    model = mu.load_new_model(model_num, area, data_type)
-    # replace invalid uncertainty with 10% of data set
-    model = mu.create_uncertainty(model, rate_type)
-    # withhold 25% of data
-    model.input_data, test_ix = mu.test_train(model.input_data, data_type, rate_type, replicate)
+# load new model
+model = mu.load_new_model(model_num, area, data_type)
+# replace invalid uncertainty with 10% of data set
+model = mu.create_uncertainty(model, rate_type)
+# withhold 25% of data
+model.input_data, test_ix = mu.test_train(model.input_data, data_type, replicate)
 
 try:
-    if rate_type == 'log_offset':
-        os.system('%s/src/dismod_spline %s/parameter_in.csv %s/prior_in.csv %s/data_in.csv %s/sample_out.csv %s/info_out.csv' %(ds_loc, save_loc, save_loc, save_loc, save_loc, save_loc, ))
-    else: 
-        # create pymc nodes for model and fit the model
-        model.vars += dismod3.ism.age_specific_rate(model, data_type, area, 'male', 2005, rate_type=rate_type)
-        # fit the model, using a hill-climbing alg to find an initial value
-        # and then sampling from the posterior with MCMC
-        start = time.clock()
-        dismod3.fit.fit_asr(model, data_type, iter=iter, thin=thin, burn=burn)
-        elapsed = (time.clock() - start)
-        # extract posterior predicted values for data
-        pred = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['mean'], columns=['mean'], index=model.input_data.index)
-        pred_ui = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['95% HPD interval'], columns=['lower', 'upper'], index=model.input_data.index) 
-        obs = pandas.DataFrame(model.vars[data_type]['p_obs'].value, columns=['value'], index=model.input_data.index)
+    # create pymc nodes for model and fit the model
+    model.vars += dismod3.ism.age_specific_rate(model, data_type, area, 'male', 2005, rate_type=rate_type)
+    # fit the model, using a hill-climbing alg to find an initial value
+    # and then sampling from the posterior with MCMC
+    start = time.clock()
+    dismod3.fit.fit_asr(model, data_type, iter=iter, thin=thin, burn=burn)
+    elapsed = (time.clock() - start)
+    # extract posterior predicted values for data
+    pred = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['mean'], columns=['mean'], index=model.input_data.index)
+    pred_ui = pandas.DataFrame(model.vars[data_type]['p_pred'].stats()['95% HPD interval'], columns=['lower', 'upper'], index=model.input_data.index) 
+    obs = pandas.DataFrame(model.vars[data_type]['p_obs'].value, columns=['value'], index=model.input_data.index)
 
     # subset only test data
     pred_test = pred.ix[test_ix]
