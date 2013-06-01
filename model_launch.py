@@ -64,7 +64,7 @@ model_types.to_csv('/home/j/Project/Models/dismodmr_rate_validation/validity/mod
     
 # joining all jobs into files
 hold_str = '-hold_jid %s ' % ','.join(name_list)
-os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd ' + hold_str + '/home/j/Project/Models/dismodmr_rate_validation/model_join.sh %d' %(replicates))
+os.system('/usr/local/bin/SGE/bin/lx24-amd64/qsub -cwd ' + hold_str + ' /home/j/Project/Models/dismodmr_rate_validation/model_join.sh %d' %(replicates))
 
 
 
